@@ -21,12 +21,9 @@
 % SOFTWARE.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% ADD CHECKs FOR EMPTY CELLS Wi
+% ADD CHECKS FOR EMPTY CELLS Wi
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% PLOT LOCATION ON CANVAS CHANGES ON EACH ITERATION
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 clear variables
 close all
@@ -35,6 +32,9 @@ PLOT_STATE_3D = 0;
 PLOT_STATE_2D = 1;
 PLOT_STATE_QUALITY = 0;
 SAVE_PLOTS = 0;
+
+% Add function path
+addpath( genpath('Functions') );
 
 % Bullo region
 Xb=[ 0, 2.125, 2.9325, 2.975, 2.9325, 2.295, 0.85, 0.17 ];
