@@ -24,8 +24,14 @@
 % ADD CHECKs FOR EMPTY CELLS Wi
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 clear variables
 close all
+
+PLOT_STATE_3D = 0;
+PLOT_STATE_2D = 1;
+PLOT_STATE_QUALITY = 0;
+SAVE_PLOTS = 0;
 
 % Add function path
 addpath( genpath('Functions') );
@@ -39,21 +45,24 @@ Yb=[ 0, 0, 1.5, 1.6, 1.7, 2.1, 2.3, 1.2 ];
 region = [Xb ; Yb];
 region_area = polyarea( Xb, Yb );
 omega_diameter = diameter( region );
+
 % ----------------- Network parameters -----------------
 % Altitude constraints
 zmin = 0.3;
 zmax = 2.3;
 
+% Quality-coverage tradeoff
+Q = 1;
+
 % Sensing cone angle (half the angle of the cone)
 a = 20*pi/180;
+
 % Sensing quality for zmin at the boundary of Ci
 b = 0.5;
 
 % Optimal altitude
 zopt = 1.563;
 
-% Quality-coverage tradeoff
-Q = 1;
 
 % Initial positions - 3 nodes - 12 seconds
 % X = [0.40, 0.60, 0.55];
@@ -111,18 +120,21 @@ Z = [0.5, 0.5];
 % Number of nodes
 N = length(X);
 
+% Sensing radii
+R = tan(a) * Z;
+
 
 % ----------------- Simulation parameters -----------------
 % Simulation steps
-smax = 240;
+smax = 200;
 % Simulation time step
 Tstep = 0.1;
+% Points Per Circle
+PPC = 60;
 % Grid size for integrals (size of side)
 gridsize = 50;
-% Points Per Circle
-PPC = 120;
 % Radius for disks on plots
-disk_rad = 0.015;
+disk_rad = 0.02;
 % vector for circle parametrization
 t = linspace(0, 2*pi, PPC+1);
 t = t(1:end-1); % remove duplicate last element
@@ -149,22 +161,12 @@ overlap = zeros(N, N);
 
 
 % ----------------- Simulation -----------------
+if PLOT_STATE_3D || PLOT_STATE_2D || PLOT_STATE_QUALITY
+	figure
+end
 tic;
 for s=1:smax
-    clf
-%     s
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     % Region
-%     plot_poly( region, 'k');
-%     hold on
-%     % Node positions
-%     plot( X, Y, '.k');
-%     hold on
-%     axis equal
-%     grid on
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
+    fprintf('%.2f%% complete\n',100*s/smax);
     
     % Sensing radii
     R = tan(a) * Z;
@@ -280,14 +282,6 @@ for s=1:smax
         W{i} = [pbx ; pby];
     end
     
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     for i=1:N
-%         plot_poly( C{i}, 'r--');
-%         hold on
-%         plot_poly( W{i}, 'k');
-%         hold on
-%     end
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % Find covered area and H objective
     for i=1:N
@@ -495,39 +489,86 @@ for s=1:smax
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Move in omega can be used here
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    end
+	end
     
         
     
     
-    % ----------------- Plot network state -----------------
-    % Region
-    plot_poly( region, 'k');
-    hold on
-    % Node positions
-%     plot( Xs(s,:), Ys(s,:), '.k');
-%     hold on
-    % Node positions, sensing disks and cells
-    for i=1:N
-        plot_poly( C{i}, 'r--');
-        hold on
-        plot_poly( W{i}, 'k');
-        hold on
-    end
-    for i=1:N
-        tmpc = [Xs(s,i) + disk_rad * cos(t) ; Ys(s,i) + disk_rad * sin(t)];
-        fill( tmpc(1,:), tmpc(2,:), 'k', 'EdgeColor', 'none' );
-        hold on
-    end
-    axis equal
-    set(gca,'position',[0 0 1 1],'units','normalized')
-    axis off
-    grid on
-    pause(0.02);
-    % -----------------------------------------------------
-    
+	if PLOT_STATE_3D || PLOT_STATE_2D || PLOT_STATE_QUALITY
+		% ----------------- Plot network 2D -----------------
+		if PLOT_STATE_2D
+			clf
+			hold on
+			% Region
+			plot_poly( region, 'k');
+			% Sensing disks and cells
+			for i=1:N
+				plot_poly( C{i}, 'r--');
+				plot_poly( W{i}, 'k');
+			end
+			% Node positions
+            for i=1:N
+%                 tmpc = [Xs(s,i) + disk_rad * cos(t) ; Ys(s,i) + disk_rad * sin(t)];
+%                 fill( tmpc(1,:), tmpc(2,:), 'k', 'EdgeColor', 'none' );
+                plot( Xs(s,i), Ys(s,i), 'k.' )
+                hold on
+            end
+            plot_AABB([-0.5 3 -0.5 3], 'w.');
+			
+			set( gca, 'Units', 'normalized', 'Position', [0 0 1 1] );
+			axis([-0.5 3 -0.5 3])
+			axis equal
+			axis off
+			
+			if SAVE_PLOTS
+				fname = strcat( '~/Frames/', sprintf('2D_frame_%d.png', s) );
+% 				print(fname, '-dpng');
+                saveas(gcf, fname);
+			else
+				pause(0.01);
+			end
+		end
+
+		% ----------------- Plot network 3D -----------------
+		if PLOT_STATE_3D
+			clf
+			hold on
+			% Sensing disks and cells
+			for i=1:N
+				plot3_poly( [C{i} ; zeros(size(C{i}(1,:)))], 'r--');
+				plot3_poly( [W{i} ; zeros(size(W{i}(1,:)))], 'k');
+			end
+			% Node positions and cones
+			for i=1:N
+				plot3( Xs(s,i), Ys(s,i), Zs(s,i), 'ko' )
+				plot3( [Xs(s,i) Xs(s,i)], [Ys(s,i) Ys(s,i)], [Zs(s,i) 0], 'k--' )
+				for j=1:24:PPC
+					plot3([C{i}(1,j) Xs(s,i)], [C{i}(2,j) Ys(s,i)], [0 Zs(s,i)], 'r--');
+				end
+			end
+			% Plot region
+			plot3_poly( [region ; zeros(size(region(1,:)))], 'k' );
+%             plot3(3, 3, zmax, 'w');
+            plot3_AABB([-0.5 3 -0.5 3 0 zmax], 'w.');
+			
+			set( gca, 'Units', 'normalized', 'Position', [0 0 1 1] );
+			view(-16, 34);
+			axis([-0.5 3 -0.5 3 0 zmax])
+			axis equal
+			axis off
+			
+			if SAVE_PLOTS
+				fname = strcat( '~/Frames/', sprintf('3D_frame_%d.png', s) );
+% 				print(fname, '-dpng');
+                saveas(gcf, fname);
+			else
+				pause(0.01);
+			end
+		end
+	end % End of plot if
 end
-average_iteration = toc / smax
+elapsed_time = toc
+average_iteration = elapsed_time / smax
 
 
 
@@ -617,4 +658,6 @@ ylabel('y');
 zlabel('z');
 
 % ------------------- Save Results -------------------------
-% save('uniform_results.mat');
+filename = ...
+	strcat( 'variable_results_' , datestr(clock,'yyyymmdd_HHMM') , '.mat' );
+save(filename);

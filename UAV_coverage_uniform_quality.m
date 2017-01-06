@@ -48,15 +48,14 @@ region_area = polyarea( Xb, Yb );
 zmin = 0.5;
 zmax = 2.5;
 
-% Optimal altitude
-zopt = (2*zmin)/3 + (3*zmax^2 - 6*zmax*zmin + 4*zmin^2)^(1/2)/3;
-
 % Quality-coverage tradeoff
 Q = 1;
 
 % Sensing cone angle (half the angle of the cone)
 a = 20*pi/180;
 
+% Optimal altitude
+zopt = (2*zmin)/3 + (3*zmax^2 - 6*zmax*zmin + 4*zmin^2)^(1/2)/3;
 
 
 % Initial positions - 3 nodes - 15 seconds - zopt = 1.359
@@ -491,4 +490,6 @@ traj(2,:,:) = Ys;
 traj(3,:,:) = Zs;
 
 % ------------------- Save Results -------------------------
-save('uniform_results.mat');
+filename = ...
+	strcat( 'uniform_results_' , datestr(clock,'yyyymmdd_HHMM') , '.mat' );
+save(filename);
