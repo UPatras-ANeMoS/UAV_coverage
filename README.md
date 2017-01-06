@@ -5,6 +5,7 @@ Simulation for planar area coverage by a swarm of UAVs equipped with downwrards 
 <img src="./Screenshots/3D.png" width="49%"> <img src="./Screenshots/quality.png" width="49%">
 <img src="./Screenshots/2D.png" width="49%"> <img src="./Screenshots/objective.png" width="49%">
 
-### License
+## License
 Distributed under the [MIT License](LICENSE.txt).
-
+<br>
+Copyright © 2016 Sotiris Papatheodorou
