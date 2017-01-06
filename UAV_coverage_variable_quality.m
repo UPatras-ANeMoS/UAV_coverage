@@ -36,8 +36,6 @@ SAVE_PLOTS = 0;
 % Add function path
 addpath( genpath('Functions') );
 
-colors = {'b.', 'g.'};
-
 % Bullo region
 Xb=[ 0, 2.125, 2.9325, 2.975, 2.9325, 2.295, 0.85, 0.17 ];
 Yb=[ 0, 0, 1.5, 1.6, 1.7, 2.1, 2.3, 1.2 ];
