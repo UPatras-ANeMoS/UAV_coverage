@@ -55,7 +55,7 @@ Q = 1;
 a = 20*pi/180;
 
 % Optimal altitude
-zopt = (2*zmin)/3 + (3*zmax^2 - 6*zmax*zmin + 4*zmin^2)^(1/2)/3;
+zopt = z_optimal_uniform(zmin, zmax, a);
 
 
 % Initial positions - 3 nodes - 15 seconds - zopt = 1.359
