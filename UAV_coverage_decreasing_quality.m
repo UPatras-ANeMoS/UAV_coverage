@@ -97,9 +97,9 @@ zopt = z_optimal_decreasing(zmin, zmax, a, b);
 % zmax = 1.3;
 
 % Initial positions - Same zi
-X = [1, 1.05];
-Y = [0.8, 0.8];
-Z = [0.5, 0.5];
+% X = [1, 1.05];
+% Y = [0.8, 0.8];
+% Z = [0.5, 0.5];
 
 % Initial positions - Close zi
 % X = [1, 1.05];
@@ -107,9 +107,9 @@ Z = [0.5, 0.5];
 % Z = [0.5, 0.6];
 
 % Initial position at zmax
-% X = [1.6];
-% Y = [1.1];
-% Z = [zmax-0.01];
+X = [1.6];
+Y = [1.1];
+Z = [zmax-0.01];
 
 % All cases
 % X = [0.4, 0.7, 1.7, 1.8, 1.2, 1.7, 1.8];
@@ -125,7 +125,7 @@ R = tan(a) * Z;
 
 % ----------------- Simulation parameters -----------------
 % Simulation steps
-smax = 200;
+smax = 50;
 % Simulation time step
 Tstep = 0.1;
 % Points Per Circle
@@ -454,7 +454,10 @@ for s=1:smax
                 Iy = Iy + dx^2 * dfi_p_dxi(gy(k), gx(k), Y(i), X(i), Z(i), zmin, zmax, a, b);
                 Iz = Iz + dx^2 * dfi_p_dzi(gx(k), gy(k), X(i), Y(i), Z(i), zmin, zmax, a, b);
             end
-        end
+		end
+		
+		% Add integral over boundary to z control law
+		Iz = Iz + 2*pi*b*tan(a)^2*Z(i)*f(i);
         
         move_vectors(1,i) = move_vectors(1,i) + Ix;
         move_vectors(2,i) = move_vectors(2,i) + Iy;
