@@ -454,10 +454,7 @@ for s=1:smax
                 Iy = Iy + dx^2 * dfi_p_dxi(gy(k), gx(k), Y(i), X(i), Z(i), zmin, zmax, a, b);
                 Iz = Iz + dx^2 * dfi_p_dzi(gx(k), gy(k), X(i), Y(i), Z(i), zmin, zmax, a, b);
             end
-		end
-		
-		% Add integral over boundary to z control law
-		Iz = Iz + 2*pi*b*tan(a)^2*Z(i)*f(i);
+        end
         
         move_vectors(1,i) = move_vectors(1,i) + Ix;
         move_vectors(2,i) = move_vectors(2,i) + Iy;
@@ -661,5 +658,5 @@ zlabel('z');
 
 % ------------------- Save Results -------------------------
 filename = ...
-	strcat( 'variable_results_' , datestr(clock,'yyyymmdd_HHMM') , '.mat' );
+	strcat( 'decreasing_results_' , datestr(clock,'yyyymmdd_HHMM') , '.mat' );
 save(filename);
