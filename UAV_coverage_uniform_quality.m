@@ -165,18 +165,10 @@ for s=1:smax
     % Sensing radii
     R = tan(a) * Z;
     
-    % Coverage quality and sensing disks
+    % Coverage quality
+    f = fu(Z, zmin, zmax);
+    % Sensing disks
     for i=1:N
-        % Coverage quality, saturate to 0,1 for z outside (zmin,zmax)
-        if Z(i) <= zmin
-            f(i) = 1;
-        elseif Z(i) >= zmax
-            f(i) = 0;
-        else
-            f(i) = ( (Z(i)-zmin)^2 - (zmax-zmin)^2 )^2 / (zmax-zmin)^4;
-        end
-        
-        % Sensing disks
         C{i} = [X(i) + R(i) * cos(t) ; Y(i) + R(i) * sin(t)];
     end
     
