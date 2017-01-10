@@ -147,7 +147,7 @@ cov_area = zeros(smax,1);
 H = zeros(smax,1);
 % Initialize (cell) arrays
 % f is just the zi dependent component of the coverage quality
-f = zeros(1, N);
+f_u = zeros(1, N);
 % Sensing disks
 C = cell([1 N]);
 % Sensed space partitioning
@@ -170,18 +170,10 @@ for s=1:smax
     % Sensing radii
     R = tan(a) * Z;
     
-    % Coverage quality and sensing disks
-    for i=1:N 
-        % Coverage quality, saturate to 0,1 for z outside (zmin,zmax)
-        if Z(i) <= zmin
-            f(i) = 1;
-        elseif Z(i) >= zmax
-            f(i) = 0;
-        else
-            f(i) = ( (Z(i)-zmin)^2 - (zmax-zmin)^2 )^2 / (zmax-zmin)^4;
-        end
-        
-        % Sensing disks
+    % Coverage quality
+    f_u = fu(Z, zmin, zmax);
+    % Sensing disks
+    for i=1:N
         C{i} = [X(i) + R(i) * cos(t) ; Y(i) + R(i) * sin(t)];
         % Initialize cells to sensing disks
         W{i} = C{i};
@@ -240,10 +232,10 @@ for s=1:smax
                         % Create the Intersection Circle
                         Ki = (1-b) / R(i)^2;
                         Kj = (1-b) / R(j)^2;
-                        ICx = (Ki*f(i)*X(i) - Kj*f(j)*X(j)) / (Ki*f(i) - Kj*f(j));
-                        ICy = (Ki*f(i)*Y(i) - Kj*f(j)*Y(j)) / (Ki*f(i) - Kj*f(j));
-                        ICr = sqrt( ICx^2 + ICy^2 + (-Ki*f(i)*(X(i)^2 + Y(i)^2)...
-                            + Kj*f(j)*(X(j)^2 + Y(j)^2) + f(i)-f(j)) / (Ki*f(i) - Kj*f(j)));
+                        ICx = (Ki*f_u(i)*X(i) - Kj*f_u(j)*X(j)) / (Ki*f_u(i) - Kj*f_u(j));
+                        ICy = (Ki*f_u(i)*Y(i) - Kj*f_u(j)*Y(j)) / (Ki*f_u(i) - Kj*f_u(j));
+                        ICr = sqrt( ICx^2 + ICy^2 + (-Ki*f_u(i)*(X(i)^2 + Y(i)^2)...
+                            + Kj*f_u(j)*(X(j)^2 + Y(j)^2) + f_u(i)-f_u(j)) / (Ki*f_u(i) - Kj*f_u(j)));
                         % If the radius of IC is large, use more points for
                         % the creation of IC
                         ep = floor(2*ICr/(R(i)+R(j)));
@@ -300,7 +292,7 @@ for s=1:smax
         
         for k=1:gridsize^2
             if inpolygon( gx(k), gy(k), W{i}(1,:), W{i}(2,:) )
-                 H(s) = H(s) + dx^2 * fi_p(gx(k), gy(k), X(i), Y(i), Z(i), zmin, zmax, a, b);
+                 H(s) = H(s) + dx^2 * fp(gx(k), gy(k), X(i), Y(i), Z(i), zmin, zmax, a, b);
             end
         end
     end
@@ -393,7 +385,7 @@ for s=1:smax
                     n2 = (pt2-[X(i) ; Y(i)]) / R(i);
                     nvector = (n1 + n2) / 2;
                     d = norm( [pt1(1)-pt2(1) , pt1(2)-pt2(2)] );
-                    fi = fi_p(pt1(1), pt1(2), X(i), Y(i), Z(i), zmin, zmax, a, b);
+                    fi = fp(pt1(1), pt1(2), X(i), Y(i), Z(i), zmin, zmax, a, b);
 
                     % X-Y control law
                     move_vectors(:,i) = move_vectors(:,i) + fi * d * nvector;
@@ -412,8 +404,8 @@ for s=1:smax
                     n2 = (pt2-[X(i) ; Y(i)]) / R(i);
                     nvector = (n1 + n2) / 2;
                     d = norm( [pt1(1)-pt2(1) , pt1(2)-pt2(2)] );
-                    fi = fi_p(pt1(1), pt1(2), X(i), Y(i), Z(i), zmin, zmax, a, b);
-                    fj = fi_p(pt1(1), pt1(2), X(j), Y(j), Z(j), zmin, zmax, a, b);
+                    fi = fp(pt1(1), pt1(2), X(i), Y(i), Z(i), zmin, zmax, a, b);
+                    fj = fp(pt1(1), pt1(2), X(j), Y(j), Z(j), zmin, zmax, a, b);
                     % The value of j has been kept from the break statement
 
                     % X-Y control law
@@ -447,10 +439,10 @@ for s=1:smax
         Iz = 0;
         for k=1:gridsize^2
             if inpolygon( gx(k), gy(k), W{i}(1,:), W{i}(2,:) )
-                Ix = Ix + dx^2 * dfi_p_dxi(gx(k), gy(k), X(i), Y(i), Z(i), zmin, zmax, a, b);
+                Ix = Ix + dx^2 * dfp_dxi(gx(k), gy(k), X(i), Y(i), Z(i), zmin, zmax, a, b);
                 % Use the same function as for xi but with swapped inputs
-                Iy = Iy + dx^2 * dfi_p_dxi(gy(k), gx(k), Y(i), X(i), Z(i), zmin, zmax, a, b);
-                Iz = Iz + dx^2 * dfi_p_dzi(gx(k), gy(k), X(i), Y(i), Z(i), zmin, zmax, a, b);
+                Iy = Iy + dx^2 * dfp_dxi(gy(k), gx(k), Y(i), X(i), Z(i), zmin, zmax, a, b);
+                Iz = Iz + dx^2 * dfp_dzi(gx(k), gy(k), X(i), Y(i), Z(i), zmin, zmax, a, b);
             end
         end
         
@@ -604,7 +596,7 @@ dx = lx(2)-lx(1);
 H_opt = 0;
 for k=1:gridsize^2
     if inpolygon( gx(k), gy(k), C{i}(1,:), C{i}(2,:) )
-        H_opt = H_opt + dx^2 * fi_p(gx(k), gy(k), X(i), Y(i), Z(i), zmin, zmax, a, b);
+        H_opt = H_opt + dx^2 * fp(gx(k), gy(k), X(i), Y(i), Z(i), zmin, zmax, a, b);
     end
 end
 figure;

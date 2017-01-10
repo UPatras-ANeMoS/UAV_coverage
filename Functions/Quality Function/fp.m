@@ -1,12 +1,17 @@
+% Decreasing coverage quality function (inverted paraboloid)
+% return the coverage quality of point [x y] with respect to node 
+% [xi yi zi]
 function f = fp(x, y, xi, yi, zi, zmin, zmax, a, b )
-    fi = fu(zi, zmin, zmax);
-    Ki = (1-b) / (tan(a)*zi)^2;
+    % Sensing disk radius
+    r = zi*tan(a);
     
-    % Zero if it is outside the sensing circle
-    if ((x-xi)^2 + (y-yi)^2) <= (zi*tan(a))^2
-        % Paraboloid
-        f = (1 - Ki*( (x-xi)^2 + (y-yi)^2 ) ) * fi;
-        % Same as fi(z)
+    % Check if the point is inside the sensing circle
+    if norm([x ; y] - [xi ; yi]) <= r
+        % Calculate uniform quality for paraboloid maximum value
+        fiu = fu(zi, zmin, zmax);
+        
+        % Value of paraboloid at point [x y]
+        f = (1 - (1-b) * ((x-xi)^2 + (y-yi)^2) / r^2) * fiu;
     else
         f = 0;
     end
