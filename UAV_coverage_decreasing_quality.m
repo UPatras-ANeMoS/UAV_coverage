@@ -59,8 +59,9 @@ a = 20*pi/180;
 b = 0.5;
 
 % Optimal altitude
-zopt = z_optimal_decreasing(zmin, zmax, a, b);
+% zopt = z_optimal_decreasing(zmin, zmax, a, b);
 % zopt = 1.563;
+zopt = 1.3;
 
 
 % Initial positions - 3 nodes - 12 seconds
@@ -110,6 +111,7 @@ zopt = z_optimal_decreasing(zmin, zmax, a, b);
 X = [1.6];
 Y = [1.1];
 Z = [zmax-0.01];
+Z = [1.3];
 
 % All cases
 % X = [0.4, 0.7, 1.7, 1.8, 1.2, 1.7, 1.8];
@@ -131,7 +133,7 @@ Tstep = 0.1;
 % Points Per Circle
 PPC = 60;
 % Grid size for integrals (size of side)
-gridsize = 50;
+gridsize = 100;
 % Radius for disks on plots
 disk_rad = 0.02;
 % vector for circle parametrization
@@ -599,11 +601,12 @@ for k=1:gridsize^2
         H_opt = H_opt + dx^2 * fp(gx(k), gy(k), X(i), Y(i), Z(i), zmin, zmax, a, b);
     end
 end
+H_opt = N*H_opt;
 figure;
 plot( Tstep*linspace(1,smax,smax), 100*H / H_opt, 'b');
 hold on
 plot( Tstep*[1 smax], [100 100], 'k--');
-axis([0 Tstep*smax 0 100]);
+% axis([0 Tstep*smax 0 100]);
 h = xlabel('$Time ~(s)$');
 set(h,'Interpreter','latex')
 h = ylabel('$\frac{\mathcal{H}}{\mathcal{H}_{opt}} ~(\%)$');
