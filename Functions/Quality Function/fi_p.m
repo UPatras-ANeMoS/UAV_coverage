@@ -5,8 +5,7 @@ function c = fi_p(x, y, xi, yi, zi, zmin, zmax, a, b )
     % Zero if it is outside the sensing circle
     if ((x-xi)^2 + (y-yi)^2) <= (zi*tan(a))^2
         % Paraboloid
-        c = (1 - Ki*( (x-xi)^2 + (y-yi)^2 ) )...
-        * fi;
+        c = (1 - Ki*( (x-xi)^2 + (y-yi)^2 ) ) * fi;
         % Same as fi(z)
     else
         c = 0;

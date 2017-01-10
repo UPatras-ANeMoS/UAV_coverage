@@ -352,10 +352,7 @@ for s=1:smax
             [~, onB1] = inpolygon( pt1(1), pt1(2), Xb, Yb );
             [~, onB2] = inpolygon( pt2(1), pt2(2), Xb, Yb );
 
-            if onB1 && onB2
-                % This is a boundary arc, do nothing
-                arc = 0;
-            else
+            if ~(onB1 && onB2)
                 % Check if they are on Ci
                 [~, onCi1] = inpolygon( pt1(1), pt1(2), C{i}(1,:), C{i}(2,:) );
                 [~, onCi2] = inpolygon( pt2(1), pt2(2), C{i}(1,:), C{i}(2,:) );
@@ -388,7 +385,7 @@ for s=1:smax
             % Find the control law depending on the arc
             switch arc
                 case 0
-                    % Boundary arc
+                    % Boundary or arc of Cj
                 case 1
                     % Free arc %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                     % Normal vector on Ci
@@ -417,6 +414,7 @@ for s=1:smax
                     d = norm( [pt1(1)-pt2(1) , pt1(2)-pt2(2)] );
                     fi = fi_p(pt1(1), pt1(2), X(i), Y(i), Z(i), zmin, zmax, a, b);
                     fj = fi_p(pt1(1), pt1(2), X(j), Y(j), Z(j), zmin, zmax, a, b);
+                    % The value of j has been kept from the break statement
 
                     % X-Y control law
                     move_vectors(:,i) = move_vectors(:,i) + (fi-fj) * d * nvector;
