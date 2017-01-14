@@ -5,7 +5,7 @@ function f = fp(x, y, xi, yi, zi, zmin, zmax, a, b )
     % Sensing disk radius
     r = zi*tan(a);
     
-    % Check if the point is inside the sensing circle
+    % Check if the point is inside the sensing circle (MAYBE REMOVE THIS?)
     if norm([x ; y] - [xi ; yi]) <= r
         % Calculate uniform quality for paraboloid maximum value
         fiu = fu(zi, zmin, zmax);

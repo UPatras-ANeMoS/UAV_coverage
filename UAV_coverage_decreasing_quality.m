@@ -127,7 +127,7 @@ R = tan(a) * Z;
 
 % ----------------- Simulation parameters -----------------
 % Simulation steps
-smax = 1;
+smax = 50;
 % Simulation time step
 Tstep = 0.1;
 % Points Per Circle
@@ -455,9 +455,9 @@ for s=1:smax
             end
         end
         %%%%%%%%%%%% DEBUG %%%%%%%%%%%%
-		fprintf('r%d = %.8f\n', i, R(i))
-        fprintf('z%d = %.8f\n', i, Z(i))
-        fprintf('Ib = %.8f  Ic = %.8f\n', uZ(i), Iz)
+% 		fprintf('r%d = %.8f\n', i, R(i))
+%         fprintf('z%d = %.8f\n', i, Z(i))
+%         fprintf('Ib = %.8f  Ic = %.8f\n', uZ(i), Iz)
         %%%%%%%%%%%% DEBUG %%%%%%%%%%%%
         
         move_vectors(1,i) = move_vectors(1,i) + Ix;
