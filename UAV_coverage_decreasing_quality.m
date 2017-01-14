@@ -111,7 +111,7 @@ zopt = 1.3;
 X = [1.6];
 Y = [1.1];
 Z = [zmax-0.01];
-Z = [1.3];
+Z = [1.289898989898990];
 
 % All cases
 % X = [0.4, 0.7, 1.7, 1.8, 1.2, 1.7, 1.8];
@@ -127,7 +127,7 @@ R = tan(a) * Z;
 
 % ----------------- Simulation parameters -----------------
 % Simulation steps
-smax = 50;
+smax = 1;
 % Simulation time step
 Tstep = 0.1;
 % Points Per Circle
@@ -447,6 +447,10 @@ for s=1:smax
                 Iz = Iz + dx^2 * dfp_dzi(gx(k), gy(k), X(i), Y(i), Z(i), zmin, zmax, a, b);
             end
         end
+        %%%%%%%%%%%% DEBUG %%%%%%%%%%%%
+        fprintf('z%d = %.4f\n', i, Z(i))
+        fprintf('Ib = %.4f  Ic = %.4f\n', uZ(i), Iz)
+        %%%%%%%%%%%% DEBUG %%%%%%%%%%%%
         
         move_vectors(1,i) = move_vectors(1,i) + Ix;
         move_vectors(2,i) = move_vectors(2,i) + Iy;
