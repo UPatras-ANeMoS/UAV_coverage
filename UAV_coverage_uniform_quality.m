@@ -483,5 +483,5 @@ traj(3,:,:) = Zs;
 
 % ------------------- Save Results -------------------------
 filename = ...
-	strcat( 'uniform_results_' , datestr(clock,'yyyymmdd_HHMM') , '.mat' );
+	strcat( 'results_uniform_' , datestr(clock,'yyyymmdd_HHMM') , '.mat' );
 save(filename);

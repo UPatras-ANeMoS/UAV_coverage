@@ -111,7 +111,7 @@ zopt = 1.3;
 X = [1.6];
 Y = [1.1];
 Z = [zmax-0.01];
-Z = [1.289898989898990];
+Z = [0.3];
 
 % All cases
 % X = [0.4, 0.7, 1.7, 1.8, 1.2, 1.7, 1.8];
@@ -333,10 +333,15 @@ for s=1:smax
         % Integrate over the arcs
         % Loop over all line segments of Wi
         % Wi is used instead of W{i} to include cases with NaNs
-        for k=1:length(Wi(1,:) )-1
+		
+		% Remove duplicate last vertex from Wi
+		if isequal( Wi(:,1), Wi(:,end) )
+			Wi = Wi(:,1:end-1);
+		end
+        for k=1:length(Wi(1,:))
             % endpoints of the current line segment
             pt1 = Wi(:,k);
-            pt2 = Wi(:,k+1);
+            pt2 = Wi(:,mod(k,length(Wi(1,:))) + 1);
             
             % Initialize arc
             arc = 0;
@@ -386,14 +391,15 @@ for s=1:smax
                     n1 = (pt1-[X(i) ; Y(i)]) / R(i);
                     n2 = (pt2-[X(i) ; Y(i)]) / R(i);
                     nvector = (n1 + n2) / 2;
-                    d = norm( [pt1(1)-pt2(1) , pt1(2)-pt2(2)] );
-                    fi = fp(pt1(1), pt1(2), X(i), Y(i), Z(i), zmin, zmax, a, b);
+                    dl = norm( [pt1(1)-pt2(1) , pt1(2)-pt2(2)] );
+					% Do not use fp because of numerical accuracy
+					fi = b * f_u(i);
 
                     % X-Y control law
-                    move_vectors(:,i) = move_vectors(:,i) + fi * d * nvector;
+                    move_vectors(:,i) = move_vectors(:,i) + fi * dl * nvector;
 
                     % Z control law
-                    uZ(i) = uZ(i) + fi*tan(a)*d;
+                    uZ(i) = uZ(i) + fi*tan(a)*dl;
 
                     % DEBUG PLOTS
 %                     plot( (pt1(1)+pt2(1))/2, (pt1(2)+pt2(2))/2, 'r.');
@@ -405,20 +411,21 @@ for s=1:smax
                     n1 = (pt1-[X(i) ; Y(i)]) / R(i);
                     n2 = (pt2-[X(i) ; Y(i)]) / R(i);
                     nvector = (n1 + n2) / 2;
-                    d = norm( [pt1(1)-pt2(1) , pt1(2)-pt2(2)] );
-                    fi = fp(pt1(1), pt1(2), X(i), Y(i), Z(i), zmin, zmax, a, b);
-                    fj = fp(pt1(1), pt1(2), X(j), Y(j), Z(j), zmin, zmax, a, b);
+                    dl = norm( [pt1(1)-pt2(1) , pt1(2)-pt2(2)] );
+					% Do not use fp because of numerical accuracy
+					fi = b * f_u(i);
+					fj = b * f_u(j);
                     % The value of j has been kept from the break statement
 
                     % X-Y control law
-                    move_vectors(:,i) = move_vectors(:,i) + (fi-fj) * d * nvector;
+                    move_vectors(:,i) = move_vectors(:,i) + (fi-fj) * dl * nvector;
 
                     % Z control law
-                    uZ(i) = uZ(i) + (fi-fj)*tan(a)*d;
+                    uZ(i) = uZ(i) + (fi-fj)*tan(a)*dl;
 
                     % DEBUG PLOTS
-                    plot( (pt1(1)+pt2(1))/2, (pt1(2)+pt2(2))/2, 'b.');
-                    hold on
+%                     plot( (pt1(1)+pt2(1))/2, (pt1(2)+pt2(2))/2, 'b.');
+%                     hold on
             end % End of arc selection switch
         end % Loop over each edge of Wi
         
@@ -448,8 +455,9 @@ for s=1:smax
             end
         end
         %%%%%%%%%%%% DEBUG %%%%%%%%%%%%
-        fprintf('z%d = %.4f\n', i, Z(i))
-        fprintf('Ib = %.4f  Ic = %.4f\n', uZ(i), Iz)
+		fprintf('r%d = %.8f\n', i, R(i))
+        fprintf('z%d = %.8f\n', i, Z(i))
+        fprintf('Ib = %.8f  Ic = %.8f\n', uZ(i), Iz)
         %%%%%%%%%%%% DEBUG %%%%%%%%%%%%
         
         move_vectors(1,i) = move_vectors(1,i) + Ix;
@@ -562,8 +570,10 @@ for s=1:smax
 		end
 	end % End of plot if
 end
-elapsed_time = toc
-average_iteration = elapsed_time / smax
+elapsed_time = toc;
+average_iteration = elapsed_time / smax;
+fprintf('\nSimulation time: %.4f s\n', elapsed_time)
+fprintf('Average iteration time: %.4f s\n', average_iteration)
 
 
 
@@ -655,5 +665,5 @@ zlabel('z');
 
 % ------------------- Save Results -------------------------
 filename = ...
-	strcat( 'decreasing_results_' , datestr(clock,'yyyymmdd_HHMM') , '.mat' );
+	strcat( 'results_decreasing_' , datestr(clock,'yyyymmdd_HHMM') , '.mat' );
 save(filename);

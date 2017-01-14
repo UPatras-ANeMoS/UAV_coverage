@@ -14,4 +14,5 @@ function f = fp(x, y, xi, yi, zi, zmin, zmax, a, b )
         f = (1 - (1-b) * ((x-xi)^2 + (y-yi)^2) / r^2) * fiu;
     else
         f = 0;
+		fprintf('out\n')
     end
