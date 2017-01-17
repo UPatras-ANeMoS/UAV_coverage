@@ -1,6 +1,6 @@
 % MIT License
 % 
-% Copyright (c) 2016-2017 Sotiris Papatheodorou
+% Copyright (c) 2017 Sotiris Papatheodorou
 % 
 % Permission is hereby granted, free of charge, to any person obtaining a copy
 % of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ADD CHECKS FOR EMPTY CELLS Wi
+% ADD PHI IN H CALCULATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -56,6 +57,9 @@ a = 20*pi/180;
 
 % Optimal altitude
 zopt = z_optimal_uniform(zmin, zmax, a);
+
+% A priori importance function
+phi = @PHI_gaussian1;
 
 
 % Initial positions - 3 nodes - 15 seconds
@@ -136,6 +140,8 @@ smax = 80;
 Tstep = 0.1;
 % Points Per Circle
 PPC = 60;
+% Grid size for double integrals
+gridsize = 50;
 % Radius for disks on plots
 disk_rad = 0.02;
 % vector for circle parameterization
@@ -266,16 +272,15 @@ for s=1:smax
                                     n1 = (pt1-[X(i) ; Y(i)]) / R(i);
                                     n2 = (pt2-[X(i) ; Y(i)]) / R(i);
                                     nvector = (n1 + n2) / 2;
+									midpt = (pt1 + pt2) / 2;
+									phi_mpt = phi(midpt(1), midpt(2));
 
                                     % X-Y control law
-                                    move_vectors(:,i) = move_vectors(:,i) + (f(i)-f(j)) * d * nvector;
+                                    move_vectors(:,i) = move_vectors(:,i) + ...
+										(f(i)-f(j)) * d * nvector * phi_mpt;
 
                                     % Z control law
-                                    uZ(i) = uZ(i) + (f(i)-f(j))*tan(a)*d;
-
-                                    % DEBUG PLOTS
-    %                                     plot( (pt1(1)+pt2(1))/2, (pt1(2)+pt2(2))/2, 'b.');
-    %                                     hold on
+                                    uZ(i) = uZ(i) + (f(i)-f(j))*tan(a)*d*phi_mpt;
                                 end
 
                                 % If any of the points is inside a Cj, this is
@@ -292,16 +297,15 @@ for s=1:smax
                             n1 = (pt1-[X(i) ; Y(i)]) / R(i);
                             n2 = (pt2-[X(i) ; Y(i)]) / R(i);
                             nvector = (n1 + n2) / 2;
+							midpt = (pt1 + pt2) / 2;
+							phi_mpt = phi(midpt(1), midpt(2));
 
                             % X-Y control law
-                            move_vectors(:,i) = move_vectors(:,i) + f(i) * d * nvector;
+                            move_vectors(:,i) = move_vectors(:,i) + ...
+								f(i) * d * nvector * phi_mpt;
 
                             % Z control law
-                            uZ(i) = uZ(i) + f(i)*tan(a)*d;
-
-                            % DEBUG PLOTS
-    %                             plot( (pt1(1)+pt2(1))/2, (pt1(2)+pt2(2))/2, 'g.');
-    %                             hold on
+                            uZ(i) = uZ(i) + f(i)*tan(a)*d*phi_mpt;
                         end
 
                     end
@@ -315,9 +319,23 @@ for s=1:smax
                 dfi=0;
             else
                 dfi=4*(Z(i)-zmin)*((Z(i)-zmin)^2-(zmax-zmin)^2)/(zmax-zmin)^4;
-            end
+			end
+			
+			% Numerically integrate phi on Wi
+			I = 0;
+			[xm, ym] = meshgrid(linspace(X(i)-R(i),X(i)+R(i),gridsize), ...
+				linspace(Y(i)-R(i),Y(i)+R(i),gridsize));
+			dx = abs(xm(1,1)-xm(1,2));
+			dy = abs(ym(1,1)-ym(2,1));
+			for l=1:gridsize^2
+				if inpolygon(xm(l), ym(l), W{i}(1,:), W{i}(2,:))
+					ds = dx*dy;
 
-            uZ(i) = uZ(i) + Q * dfi * polyarea_nan( W{i}(1,:), W{i}(2,:) );
+					I = I + ds * phi(xm(l), ym(l));
+				end
+			end
+			
+            uZ(i) = uZ(i) + Q * dfi * I;
         end
     end % node for
     
@@ -355,6 +373,7 @@ for s=1:smax
 		if PLOT_STATE_2D
 			clf
 			hold on
+			plot_phi( phi , region );
 			% Region
 			plot_poly( region, 'k');
 			% Sensing disks and cells
