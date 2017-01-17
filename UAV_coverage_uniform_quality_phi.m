@@ -56,7 +56,7 @@ Q = 1;
 a = 20*pi/180;
 
 % Optimal altitude
-zopt = z_optimal_uniform(zmin, zmax, a);
+zopt = z_optimal_uniform(zmin, zmax);
 
 % A priori importance function
 phi = @PHI_gaussian1;
@@ -523,5 +523,5 @@ traj(3,:,:) = Zs;
 
 % ------------------- Save Results -------------------------
 filename = ...
-	strcat( 'results_uniform_' , datestr(clock,'yyyymmdd_HHMM') , '.mat' );
+	strcat( 'results_uniform_phi_' , datestr(clock,'yyyymmdd_HHMM') , '.mat' );
 save(filename);

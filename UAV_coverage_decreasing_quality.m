@@ -61,7 +61,7 @@ b = 0.5;
 % Optimal altitude
 % zopt = z_optimal_decreasing(zmin, zmax, a, b);
 % zopt = 1.563;
-zopt = 1.3;
+zopt = z_optimal_decreasing(zmin, zmax);
 
 
 % Initial positions - 3 nodes - 12 seconds
@@ -111,7 +111,7 @@ zopt = 1.3;
 X = [1.6];
 Y = [1.1];
 Z = [zmax-0.01];
-Z = [0.3];
+Z = [0.9];
 
 % All cases
 % X = [0.4, 0.7, 1.7, 1.8, 1.2, 1.7, 1.8];
