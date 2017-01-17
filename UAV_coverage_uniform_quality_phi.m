@@ -107,9 +107,9 @@ Z = [0.45, 0.55, 0.50];
 % Z = [0.6, 0.6];
 
 % Initial position at zmax
-% X = [0.6];
-% Y = [0.1];
-% Z = [zmax-0.01];
+X = [1.6];
+Y = [1.1];
+Z = [zmax-1.01];
 
 % All cases
 % X = [0.4, 0.7, 1.7, 1.8, 1.2, 1.7, 1.8];
@@ -199,8 +199,20 @@ for s=1:smax
     % Find covered area and H objective
     for i=1:N
         if ~isempty(W{i})
+            % Numerically integrate phi on Wi
+			I = 0;
+			[xm, ym] = meshgrid(linspace(X(i)-R(i),X(i)+R(i),gridsize), ...
+				linspace(Y(i)-R(i),Y(i)+R(i),gridsize));
+			dx = abs(xm(1,1)-xm(1,2));
+			dy = abs(ym(1,1)-ym(2,1));
+            for l=1:gridsize^2
+                if inpolygon(xm(l), ym(l), W{i}(1,:), W{i}(2,:))
+                    ds = dx*dy;
+                    I = I + ds * phi(xm(l), ym(l));
+                end
+            end
+            H(s) = H(s) + f(i) * I;
             cov_area(s) = cov_area(s) + polyarea_nan(W{i}(1,:), W{i}(2,:));
-            H(s) = H(s) + f(i) * polyarea_nan(W{i}(1,:), W{i}(2,:));
         end
     end
     cov_area(s) = cov_area(s)/region_area;
@@ -272,7 +284,7 @@ for s=1:smax
                                     n1 = (pt1-[X(i) ; Y(i)]) / R(i);
                                     n2 = (pt2-[X(i) ; Y(i)]) / R(i);
                                     nvector = (n1 + n2) / 2;
-									midpt = (pt1 + pt2) / 2;
+									midpt = R(i) * nvector + [X(i) ; Y(i)];
 									phi_mpt = phi(midpt(1), midpt(2));
 
                                     % X-Y control law
@@ -297,7 +309,7 @@ for s=1:smax
                             n1 = (pt1-[X(i) ; Y(i)]) / R(i);
                             n2 = (pt2-[X(i) ; Y(i)]) / R(i);
                             nvector = (n1 + n2) / 2;
-							midpt = (pt1 + pt2) / 2;
+							midpt = R(i) * nvector + [X(i) ; Y(i)];
 							phi_mpt = phi(midpt(1), midpt(2));
 
                             % X-Y control law
@@ -471,8 +483,10 @@ for s=1:smax
 	end
 
 end
-elapsed_time = toc
-average_iteration = elapsed_time / smax
+elapsed_time = toc;
+average_iteration = elapsed_time / smax;
+fprintf('\nSimulation time: %.4f s\n', elapsed_time)
+fprintf('Average iteration time: %.4f s\n', average_iteration)
 
 
 
@@ -492,15 +506,13 @@ h = ylabel('$A_{cov}~(\%)$');
 set(h,'Interpreter','latex')
 
 % Plot objective
-H_opt = N * pi * (zopt * tan(a))^2 * fu(zopt, zmin, zmax);
 figure;
-plot( Tstep*linspace(1,smax,smax), 100*H / H_opt, 'b');
+plot( Tstep*linspace(1,smax,smax), H, 'b');
 hold on
-plot( Tstep*[1 smax], [100 100], 'k--');
-axis([0 Tstep*smax 0 100]);
+axis([0 Tstep*smax 0 ceil(max(H))]);
 h = xlabel('$Time ~(s)$');
 set(h,'Interpreter','latex')
-h = ylabel('$\frac{\mathcal{H}}{\mathcal{H}_{opt}} ~(\%)$');
+h = ylabel('$\mathcal{H}$');
 set(h,'Interpreter','latex')
 
 % Save trajectories

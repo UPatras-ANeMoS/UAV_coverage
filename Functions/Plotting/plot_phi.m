@@ -53,10 +53,12 @@ surf(xm, ym, f, 'EdgeColor', 'none');
 
 
 % Create a large scaled version of the region
-% region_sc = offset_hom(region, 10);
-% [pbx, pby] = polybool('minus', region_sc(1,:), region_sc(2,:), ...
-% 	region(1,:), region(2,:));
-% fill_nan( pbx, pby, 'w');
+region_sc = offset_hom(region, 10);
+[pbx, pby] = polybool('minus', region_sc(1,:), region_sc(2,:), ...
+	region(1,:), region(2,:));
+[F, V] = poly2fv(pbx, pby);
+patch('Faces', F, 'Vertices', V, 'FaceColor', 'w', ...
+  'EdgeColor', 'none')
 
 if ~hh
 	hold off;

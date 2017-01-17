@@ -452,8 +452,10 @@ for s=1:smax
 	end
 
 end
-elapsed_time = toc
-average_iteration = elapsed_time / smax
+elapsed_time = toc;
+average_iteration = elapsed_time / smax;
+fprintf('\nSimulation time: %.4f s\n', elapsed_time)
+fprintf('Average iteration time: %.4f s\n', average_iteration)
 
 
 

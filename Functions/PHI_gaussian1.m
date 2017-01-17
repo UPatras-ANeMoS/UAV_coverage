@@ -26,6 +26,6 @@ function g = PHI_gaussian1(x, y)
 m = [2 1.5];
 
 % Deviation
-s = eye(2);
+s = 0.2*eye(2);
 
 g = mvnpdf([x y], m, s) + 1;
