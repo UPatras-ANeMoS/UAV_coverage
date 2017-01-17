@@ -45,8 +45,8 @@ region_area = polyarea( Xb, Yb );
 
 % ----------------- Network parameters -----------------
 % Altitude constraints
-zmin = 0.5;
-zmax = 2.5;
+zmin = 0.3;
+zmax = 2.3;
 
 % Quality-coverage tradeoff
 Q = 1;
@@ -70,6 +70,17 @@ zopt = z_optimal_uniform(zmin, zmax, a);
 % Y = [0.50, 0.60, 0.50, 0.40, 0.60, 0.50, 0.75, 0.85, 0.95];
 % Z = [0.45, 0.55, 0.50, 0.60, 0.40, 0.52, 0.57, 0.63, 0.65] + zoffset;
 
+% Initial positions - 7 nodes (deleted two from 9 nodes) - 8 seconds
+X = [1.6910359269619974 1.0671555014553136 ...
+	1.3060376187415315 0.50870489556525222 2.0464590369292974 ...
+	1.0609262551606342 1.8494381205125359];
+Y = [1.2370376839041961 0.98786408275888737 ...
+	0.33136168814863487 1.2225014356751873 0.57709034562636752 ...
+	1.8083501035247116 1.8935528313332963];
+Z = [1.0966326999239728 1.0448629252962573 ...
+	1.1043691751220159 1.04059568718053 1.1572027919849177 ...
+	1.2338162957229133 1.022310013652235];
+
 % Initial positions - 9 nodes - 5+ seconds
 % X = [1, 1.2, 1.4, 1.6, 1.8, 0.3, 2, 2.1, 0.6];
 % Y = [1, 1.5, 1.2, 0.8, 1.1, 0.5, 1.5, 1.3, 0.4];
@@ -89,9 +100,9 @@ zopt = z_optimal_uniform(zmin, zmax, a);
 % zmax = 1.3;
 
 % Initial positions - Same zi
-X = [1, 1.05];
-Y = [0.8, 0.8];
-Z = [0.6, 0.6];
+% X = [1, 1.05];
+% Y = [0.8, 0.8];
+% Z = [0.6, 0.6];
 
 % Initial position at zmax
 % X = [0.6];
@@ -122,7 +133,7 @@ R = tan(a) * Z;
 
 % ----------------- Simulation parameters -----------------
 % Simulation steps
-smax = 200;
+smax = 80;
 % Simulation time step
 Tstep = 0.1;
 % Points Per Circle
@@ -464,7 +475,7 @@ h = ylabel('$A_{cov}~(\%)$');
 set(h,'Interpreter','latex')
 
 % Plot objective
-H_opt = N * pi * (zopt * tan(a))^2 * fi_u(zopt, zmin, zmax);
+H_opt = N * pi * (zopt * tan(a))^2 * fu(zopt, zmin, zmax);
 figure;
 plot( Tstep*linspace(1,smax,smax), 100*H / H_opt, 'b');
 hold on
