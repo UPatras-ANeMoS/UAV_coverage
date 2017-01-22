@@ -20,12 +20,7 @@
 % OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 % SOFTWARE.
 
-function g = PHI_gaussian1(x, y)
+function g = PHI_uniform(x, y)
 
-% Mean
-m = [2 1.5];
-
-% Deviation
-s = 0.3*eye(2);
-
-g = 5 * mvnpdf([x y], m, s) + 1;
+% Uniform quality for all points
+g = 1;

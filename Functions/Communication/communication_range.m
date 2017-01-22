@@ -20,12 +20,13 @@
 % OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 % SOFTWARE.
 
-function g = PHI_gaussian1(x, y)
+function rc = communication_range(Z, zmin, zmax, a)
 
-% Mean
-m = [2 1.5];
+% The three worst case scenarios
+r1 = 2*Z*tan(a);
+r2 = sqrt( (Z+zmin).^2 * tan(a)^2 + (Z-zmin).^2 );
+r3 = sqrt( (Z+zmax).^2 * tan(a)^2 + (Z-zmax).^2 );
 
-% Deviation
-s = 0.3*eye(2);
-
-g = 5 * mvnpdf([x y], m, s) + 1;
+% Use tha largest distance
+rc = max(r1, r2);
+rc = max(rc, r3);
