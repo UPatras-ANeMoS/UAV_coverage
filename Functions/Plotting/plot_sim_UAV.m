@@ -148,16 +148,14 @@ if sim.PLOT_STATE_3D || sim.PLOT_STATE_2D || sim.PLOT_STATE_QUALITY || sim.PLOT_
             end
         end
         plot_AABB(sim.axis, 'w.');
-        plot3_AABB([sim.axis 0 sim.zmax], 'w.');
 
         set( gca, 'Units', 'normalized', 'Position', [0 0 1 1] );
-        view(0, 90);
         axis(sim.axis)
         axis equal
         axis off
 
         if sim.SAVE_PLOTS
-            fname = strcat( '~/Frames/', sprintf('2D_frame_%d.png', s) );
+            fname = strcat( '~/Frames/', sprintf('PHI_frame_%d.png', s) );
             saveas(gcf, fname);
         else
             pause(0.01);

@@ -47,13 +47,13 @@ for i=1:gridsize^2
 end
 
 % Create contour plot
-f = f-max(max(f));
-surf(xm, ym, f, 'EdgeColor', 'none');
+contourf(xm, ym, f, 1000, 'LineStyle', 'none');
 
 
 
-% Create a large scaled version of the region
-region_sc = offset_hom(region, 10);
+% Create a large rectangle the size of the grid
+region_sc = [max(region_sc(1,:)) max(region_sc(1,:)) min(region_sc(1,:)) min(region_sc(1,:)) ;
+            max(region_sc(2,:)) min(region_sc(2,:)) min(region_sc(2,:)) max(region_sc(2,:))];
 [pbx, pby] = polybool('minus', region_sc(1,:), region_sc(2,:), ...
 	region(1,:), region(2,:));
 [F, V] = poly2fv(pbx, pby);

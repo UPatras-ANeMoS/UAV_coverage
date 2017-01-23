@@ -188,6 +188,7 @@ sim.A = A;
 sim.PLOT_COMMS = 0;
 sim.PLOT_STATE_3D = PLOT_STATE_3D;
 sim.PLOT_STATE_2D = PLOT_STATE_2D;
+sim.PLOT_STATE_PHI = 0;
 sim.PLOT_STATE_QUALITY = PLOT_STATE_QUALITY;
 sim.SAVE_PLOTS = SAVE_PLOTS;
 
@@ -231,7 +232,7 @@ for s=1:smax
         ind = sum(A(i,1:i));
         
 		% Find the cell of each node i based on its neighbors
-		W{i} = sensed_partitioning_uniform_cell(Xb, Yb, ...
+		W{i} = sensed_partitioning_uniform_cell(region, ...
             C( logical(A(i,:)) ), f( logical(A(i,:)) ), ind);
     end
     
@@ -256,7 +257,6 @@ for s=1:smax
             H(s) = H(s) + f(i) * polyarea_nan(W{i}(1,:), W{i}(2,:));
         end
     end
-    cov_area(s) = cov_area(s)/region_area;
     
     
     % ----------------- Control law -----------------
@@ -300,7 +300,7 @@ fprintf('Average iteration time: %.4f s\n', average_iteration)
 %%%%%%%%%%%%%%%%%%% Final plots %%%%%%%%%%%%%%%%%%%
 % Plot covered area
 figure;
-plot( Tstep*linspace(1,smax,smax), 100*cov_area, 'b');
+plot( Tstep*linspace(1,smax,smax), 100*cov_area/region_area, 'b');
 hold on
 area_opt = 100 * N * pi * (zopt * tan(a))^2 / region_area;
 plot( Tstep*[1 smax], [area_opt area_opt], 'k--');
