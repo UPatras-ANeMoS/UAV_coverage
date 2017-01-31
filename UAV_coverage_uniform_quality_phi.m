@@ -34,12 +34,13 @@ a = 20*pi/180;
 % A priori importance function
 % phi = @PHI_uniform;
 phi = @PHI_gaussian1;
+% phi = @PHI_gaussian2;
 
 % Simulation options
 % Simulation duration in seconds
-Tfinal = 10;
+Tfinal = 15;
 % Time step in seconds
-Tstep = 0.1;
+Tstep = 0.01;
 
 % Control law options
 % Planar control law gain
@@ -49,13 +50,13 @@ az = 1;
 
 % Network plots to show during simulation
 PLOT_STATE_2D = 0;
-PLOT_STATE_3D = 0;
+PLOT_STATE_3D = 1;
 PLOT_STATE_PHI = 1;
-PLOT_STATE_QUALITY = 0;
-SAVE_PLOTS = 0;
+PLOT_STATE_QUALITY = 1;
+SAVE_PLOTS = 1;
 
 % Save simulation results to file
-SAVE_RESULTS = 0;
+SAVE_RESULTS = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -79,8 +80,14 @@ axis_scale = [-0.5 3 -0.5 3];
 % ---------------- Initial State ----------------
 % Initial positions - 3 nodes - 15 seconds
 X = [0.40, 0.60, 0.55];
-Y = [0.50, 0.60, 0.50];
+Y = [0.50, 0.40, 0.50];
 Z = [0.45, 0.55, 0.50];
+
+% Initial positions - 3 nodes spread out - 5 seconds
+% X = [0.40, 2.00, 0.85];
+% Y = [0.50, 0.40, 2.00];
+% Z = [0.45, 0.55, 0.50];
+
 
 % Initial positions - 9 nodes - 20 seconds
 % X = [0.40, 0.60, 0.55, 0.60, 0.50, 0.70, 0.60, 0.90, 0.80];
@@ -253,6 +260,7 @@ for s=1:smax
     sim.W = W;
     sim.f = f;
     sim.A = A;
+    sim.s = s;
     clf
     plot_sim_UAV( sim );
     
@@ -349,6 +357,6 @@ traj(3,:,:) = Zs;
 %%%%%%%%%%%%%%%%%%% Save Results %%%%%%%%%%%%%%%%%%%
 if SAVE_RESULTS
     filename = ...
-        strcat( 'results_uniform_' , datestr(clock,'yyyymmdd_HHMM') , '.mat' );
+        strcat( 'results_uniform_phi_' , datestr(clock,'yyyymmdd_HHMM') , '.mat' );
     save(filename);
 end

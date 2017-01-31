@@ -48,6 +48,17 @@ end
 
 % Create contour plot
 contourf(xm, ym, f, 1000, 'LineStyle', 'none');
+% contour(xm, ym, f, 100);
+% colorbar
+% % Create custom colormap
+% s = 256;
+% cMin = [1 1 1];
+% cMax = [0 1 0];
+% cmap = zeros(s,3);
+% for i = 1:s
+%     cmap(i,:) = cMin*(s - i)/(s - 1) + cMax*(i - 1)/(s - 1);
+% end
+% colormap(cmap)
 
 
 
@@ -57,7 +68,8 @@ region_sc = [max(region_sc(1,:)) max(region_sc(1,:)) min(region_sc(1,:)) min(reg
 [pbx, pby] = polybool('minus', region_sc(1,:), region_sc(2,:), ...
 	region(1,:), region(2,:));
 [F, V] = poly2fv(pbx, pby);
-patch('Faces', F, 'Vertices', V, 'FaceColor', 'w', ...
+% When set to completely white, it appears black when saving with print
+patch('Faces', F, 'Vertices', V, 'FaceColor', [254 254 254]/255, ...
   'EdgeColor', 'none')
 
 if ~hh

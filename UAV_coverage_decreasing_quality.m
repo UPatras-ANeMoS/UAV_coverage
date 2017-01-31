@@ -20,10 +20,6 @@
 % OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 % SOFTWARE.
 
-%%%%%%%%%%%%%%%%%%%%
-% fix H and Hopt calculation
-%%%%%%%%%%%%%%%%%%%%
-
 clear variables
 close all
 
@@ -194,7 +190,7 @@ sim.C = C;
 sim.W = W;
 sim.f = f_u;
 sim.A = A;
-sim.PLOT_COMMS = 1;
+sim.PLOT_COMMS = 0;
 sim.PLOT_STATE_3D = PLOT_STATE_3D;
 sim.PLOT_STATE_2D = PLOT_STATE_2D;
 sim.PLOT_STATE_PHI = 0;
@@ -377,6 +373,6 @@ traj(3,:,:) = Zs;
 %%%%%%%%%%%%%%%%%%% Save Results %%%%%%%%%%%%%%%%%%%
 if SAVE_RESULTS
     filename = ...
-        strcat( 'results_uniform_' , datestr(clock,'yyyymmdd_HHMM') , '.mat' );
+        strcat( 'results_decreasing_' , datestr(clock,'yyyymmdd_HHMM') , '.mat' );
     save(filename);
 end

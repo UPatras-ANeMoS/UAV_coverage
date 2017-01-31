@@ -62,8 +62,9 @@ if sim.PLOT_STATE_3D || sim.PLOT_STATE_2D || sim.PLOT_STATE_QUALITY || sim.PLOT_
         axis off
 
         if sim.SAVE_PLOTS
-            fname = strcat( '~/Frames/', sprintf('2D_frame_%d.png', s) );
-            saveas(gcf, fname);
+            fname = strcat( '~/Frames/', sprintf('2D_frame_%d.png', sim.s) );
+            print(fname,'-dpng','-r600');
+%             saveas(gcf, fname);
         else
             pause(0.01);
         end
@@ -109,8 +110,9 @@ if sim.PLOT_STATE_3D || sim.PLOT_STATE_2D || sim.PLOT_STATE_QUALITY || sim.PLOT_
         axis off
 
         if sim.SAVE_PLOTS
-            fname = strcat( '~/Frames/', sprintf('3D_frame_%d.png', s) );
-            saveas(gcf, fname);
+            fname = strcat( '~/Frames/', sprintf('3D_frame_%d.png', sim.s) );
+            print(fname,'-dpng','-r600');
+%             saveas(gcf, fname);
         else
             pause(0.01);
         end
@@ -155,8 +157,9 @@ if sim.PLOT_STATE_3D || sim.PLOT_STATE_2D || sim.PLOT_STATE_QUALITY || sim.PLOT_
         axis off
 
         if sim.SAVE_PLOTS
-            fname = strcat( '~/Frames/', sprintf('PHI_frame_%d.png', s) );
-            saveas(gcf, fname);
+            fname = strcat( '~/Frames/', sprintf('PHI_frame_%d.png', sim.s) );
+            print(fname,'-dpng','-r600');
+%             saveas(gcf, fname);
         else
             pause(0.01);
         end
@@ -183,8 +186,9 @@ if sim.PLOT_STATE_3D || sim.PLOT_STATE_2D || sim.PLOT_STATE_QUALITY || sim.PLOT_
         axis off
 
         if sim.SAVE_PLOTS
-            fname = strcat( '~/Frames/', sprintf('Q_frame_%d.png', s) );
-            saveas(gcf, fname);
+            fname = strcat( '~/Frames/', sprintf('Q_frame_%d.png', sim.s) );
+            print(fname,'-dpng','-r600');
+%             saveas(gcf, fname);
         else
             pause(0.01);
         end

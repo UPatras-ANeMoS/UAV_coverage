@@ -8,6 +8,6 @@ function f = dfu(z, zmin, zmax)
         if z(i) < zmin || z(i) > zmax
             f(i) = 0;
         else
-            f(i) = (4*(z - zmin)*((z - zmin)^2 - (zmax - zmin)^2))/(zmax - zmin)^4;
+            f(i) = (4*(z(i) - zmin)*((z(i) - zmin)^2 - (zmax - zmin)^2))/(zmax - zmin)^4;
         end
     end
