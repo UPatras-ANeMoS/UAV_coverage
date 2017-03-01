@@ -21,6 +21,6 @@ The following screenshots are from the `UAV_coverage_uniform_quality.m` simulati
 <img src="./Screenshots/2D.png" width="49%"> <img src="./Screenshots/objective.png" width="49%">
 
 ## License
-Distributed under the [MIT License](LICENSE.txt).
+Distributed under the [Apache License Version 2.0](LICENSE.txt).
 <br>
 Copyright © 2016 Sotiris Papatheodorou
