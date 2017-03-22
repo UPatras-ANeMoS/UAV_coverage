@@ -27,7 +27,7 @@ a = 20*pi/180;
 % Simulation duration in seconds
 Tfinal = 15;
 % Time step in seconds
-Tstep = 0.01;
+Tstep = 0.1;
 
 % Control law options
 % Planar control law gain
@@ -36,13 +36,13 @@ axy = 1;
 az = 1;
 
 % Network plots to show during simulation
-PLOT_STATE_2D = 0;
-PLOT_STATE_3D = 1;
-PLOT_STATE_QUALITY = 1;
-SAVE_PLOTS = 1;
+PLOT_STATE_2D = 1;
+PLOT_STATE_3D = 0;
+PLOT_STATE_QUALITY = 0;
+SAVE_PLOTS = 0;
 
 % Save simulation results to file
-SAVE_RESULTS = 1;
+SAVE_RESULTS = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 

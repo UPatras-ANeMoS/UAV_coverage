@@ -1,4 +1,4 @@
-% Copyright 2016-2017 Sotiris Papatheodorou
+% Copyright 2017 Sotiris Papatheodorou
 % 
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.
@@ -15,22 +15,26 @@
 clear variables
 close all
 
+% TODO
+% Partitioning - ok
+% Area-objective calculation - NOT ok for equal altitudes
+% Communication range calculation
+% Control law, use three parts (planar, altitude, rotational)
+%   planar - ok (checked with circles)
+%   altitude - ok (checked with circles)
+%   rotational - NOT ok
+% Make control law parametric with regards to the jacobian
+%   Define sensing pattern through symbolic expression
+
 %%%%%%%%%%%%%%%%%%% Set Simulation Options %%%%%%%%%%%%%%%%%%%
 % Network options
 % Altitude constraints
 zmin = 0.3;
 zmax = 2.3;
-% Sensing cone angle (half the angle of the cone)
-a = 20*pi/180;
-
-% A priori importance function
-% phi = @PHI_uniform;
-phi = @PHI_gaussian1;
-% phi = @PHI_gaussian2;
 
 % Simulation options
 % Simulation duration in seconds
-Tfinal = 15;
+Tfinal = 20;
 % Time step in seconds
 Tstep = 0.1;
 
@@ -39,11 +43,18 @@ Tstep = 0.1;
 axy = 1;
 % Altitude control law gain
 az = 1;
+% Rotational control law gain
+ath = 5;
+
+% Use finite communication range
+COMM_RANGE = 0;
+
+% Use maximum circle approximation of sensing pattern
+CIRCLE_APPROX = 0;
 
 % Network plots to show during simulation
 PLOT_STATE_2D = 1;
 PLOT_STATE_3D = 0;
-PLOT_STATE_PHI = 0;
 PLOT_STATE_QUALITY = 0;
 SAVE_PLOTS = 0;
 
@@ -52,6 +63,22 @@ SAVE_RESULTS = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+
+%%%%%%%%%%%%%%%%%%% Sensing Pattern Parametric equation %%%%%%%%%%%%%%%%%%%
+% Parametric equation of base sensing patern:
+% node at [0 0 zmin] and orientation 0
+% a = 0.5 b = 0.3 in ICRA14
+a = 0.15;
+b = 0.09;
+% Offset of the ellipse center
+c_offset_x = a/2;
+c_offset_y = 0;
+syms t gx gy g
+assume([t gx gy g],'real');
+gx = a * cos(t);
+gy = b * sin(t);
+g = [gx ; gy];
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
@@ -70,94 +97,55 @@ region_area = polyarea( Xb, Yb );
 axis_scale = [-0.5 3 -0.5 3];
 
 % ---------------- Initial State ----------------
-% Initial positions - 3 nodes - 15 seconds
 X = [0.40, 0.60, 0.55];
-Y = [0.50, 0.40, 0.50];
+Y = [0.50, 0.60, 0.50];
 Z = [0.45, 0.55, 0.50];
+TH = [0.1 -0.2 0.5];
 
-% Initial positions - 3 nodes spread out - 5 seconds
-% X = [0.40, 2.00, 0.85];
-% Y = [0.50, 0.40, 2.00];
-% Z = [0.45, 0.55, 0.50];
+% YS initial
+X = [1.8213681165510334 1.4816585705892809 2.0061832707330876 ...
+    1.5360483374617235 1.4431379448894295 1.7923852150366215 ...
+    1.3049294775487454 1.9108348621516573 ];
+Y = [0.91283954968302494 1.2055884878021055 1.3419690768039203 ...
+    1.4543510611496755 1.6047375622673639 1.5852600819312745 ...
+    1.1343085651524876 0.79464716869746166 ];
+TH = [2.4679773854259808 0.28861356578484565 4.9641841747027469 ...
+	0.274211804968107 3.672512046080453 1.3573179379420355 ...
+	3.5407470134652721 1.2436339452103413 ];
+Z = [0.8 0.55 0.9 0.65 0.7 0.85 1 1.1];
 
-
-% Initial positions - 9 nodes - 20 seconds
-% X = [0.40, 0.60, 0.55, 0.60, 0.50, 0.70, 0.60, 0.90, 0.80];
-% Y = [0.50, 0.60, 0.50, 0.40, 0.60, 0.50, 0.75, 0.85, 0.95];
-% Z = [0.45, 0.55, 0.50, 0.60, 0.40, 0.52, 0.57, 0.63, 0.65];
-
-% Initial positions - 7 nodes (deleted two from 9 nodes) - 8 seconds
-% X = [1.6910359269619974 1.0671555014553136 ...
-% 	1.3060376187415315 0.50870489556525222 2.0464590369292974 ...
-% 	1.0609262551606342 1.8494381205125359];
-% Y = [1.2370376839041961 0.98786408275888737 ...
-% 	0.33136168814863487 1.2225014356751873 0.57709034562636752 ...
-% 	1.8083501035247116 1.8935528313332963];
-% Z = [1.0966326999239728 1.0448629252962573 ...
-% 	1.1043691751220159 1.04059568718053 1.1572027919849177 ...
-% 	1.2338162957229133 1.022310013652235];
-
-% Initial positions - 9 nodes - 5+ seconds
-% X = [1, 1.2, 1.4, 1.6, 1.8, 0.3, 2, 2.1, 0.6];
-% Y = [1, 1.5, 1.2, 0.8, 1.1, 0.5, 1.5, 1.3, 0.4];
-% Z = [0.4, 0.6, 0.7, 0.8, 1, 0.38, 0.35, 0.5, 0.55];
-% Z = [0.4, 0.6, 0.7, 0.8, 1, 0.55, 0.35, 0.5, 0.55]; % fi = fj
-
-% Initial positions - Sensing in sensing - movement
-% X = [1, 1.1];
-% Y = [0.8, 0.85];
-% Z = [0.38, 0.75];
-% zmax = 1.3;
-
-% Initial positions - Sensing in sensing - no movement
-% X = [1, 1.05];
-% Y = [0.8, 0.8];
-% Z = [0.38, 1.1];
-% zmax = 1.3;
-
-% Initial positions - Same zi
-% X = [1, 1.05];
-% Y = [0.8, 0.8];
-% Z = [0.6, 0.6];
-
-% Initial position at zmax
-% X = [0.6];
-% Y = [0.1];
-% Z = [zmax-0.01];
-
-% Almost coincident nodes
-% X = [1, 1] + 0.2;
-% Y = [1, 1];
-% Z = [zmax-0.001, zmax-0.002];
-
-% Empty cell
-% X = [2.2, 2, 2.1, 2.4, 2.3] - 1;
-% Y = [0.5, 0.35, 0.6, 0.6, 0.3] + 0.5;
-% Z = [1.3, 0.9, 1.2, 1, 0.95];
-
+% X = [1 1.2];
+% Y = [1 1];
+% Z = [1 1.1];
+% TH = [-1.2*pi/2 -pi/2];
 
 % ---------------- Simulation initializations ----------------
-% Caclulate optimal altitude
-zopt = z_optimal_uniform(zmin, zmax);
 % Number of nodes
 N = length(X);
 % Simulation steps
 smax = floor(Tfinal/Tstep);
-% Grid size for double integrals
-gridsize = 50;
 % Points Per Circle
-PPC = 60;
+PPC = 120;
 % Radius for points on plots
 disk_rad = 0.02;
 % Vector for circle parameterization
 t = linspace(0, 2*pi, PPC+1);
 t = t(1:end-1); % remove duplicate last element
 t = fliplr(t); % flip to create CW ordered circles
+% Sensing pattern with node at origin, zmin and theta_i = 0
+Cb_real = [a*cos(t) + c_offset_x ; b*sin(t) + c_offset_y];
+[Cb_min_radius, Cb_max_radius] = sensing_pattern_radii(Cb_real);
+if CIRCLE_APPROX
+	% Maximal inscribed circle
+	Cb = [Cb_min_radius*cos(t) ; Cb_min_radius*sin(t)];
+else
+	Cb = Cb_real;
+end
 % Simulation data storage
 Xs = zeros(smax, N);
 Ys = zeros(smax, N);
 Zs = zeros(smax, N);
-Rs = zeros(smax, N);
+THs = zeros(smax, N);
 cov_area = zeros(smax,1);
 H = zeros(smax,1);
 % Initialize (cell) arrays
@@ -171,6 +159,7 @@ W = cell([1 N]);
 uX = zeros(1,N);
 uY = zeros(1,N);
 uZ = zeros(1,N);
+uTH = zeros(1,N);
 % Communication range for each node
 r_comm = zeros(1,N);
 % Adjacency matrix for communication graph
@@ -180,22 +169,24 @@ A = zeros(N,N);
 sim = struct;
 sim.region = region;
 sim.axis = axis_scale;
-sim.phi = phi;
 sim.PPC = PPC;
 sim.zmin = zmin;
 sim.zmax = zmax;
 sim.X = X;
 sim.Y = Y;
 sim.Z = Z;
+sim.TH = TH;
 sim.N = N;
+sim.Cb = Cb_real;
 sim.C = C;
 sim.W = W;
 sim.f = f;
 sim.A = A;
 sim.PLOT_COMMS = 0;
+sim.CIRCLE_APPROX = CIRCLE_APPROX;
 sim.PLOT_STATE_3D = PLOT_STATE_3D;
 sim.PLOT_STATE_2D = PLOT_STATE_2D;
-sim.PLOT_STATE_PHI = PLOT_STATE_PHI;
+sim.PLOT_STATE_PHI = 0;
 sim.PLOT_STATE_QUALITY = PLOT_STATE_QUALITY;
 sim.SAVE_PLOTS = SAVE_PLOTS;
 
@@ -205,7 +196,7 @@ sim.SAVE_PLOTS = SAVE_PLOTS;
 
 
 %%%%%%%%%%%%%%%%%%% Simulation %%%%%%%%%%%%%%%%%%%
-if PLOT_STATE_3D || PLOT_STATE_2D || PLOT_STATE_QUALITY || PLOT_STATE_PHI
+if PLOT_STATE_3D || PLOT_STATE_2D || PLOT_STATE_QUALITY
 	figure
 end
 tic;
@@ -213,34 +204,26 @@ for s=1:smax
 	fprintf('%.2f%% complete\n',100*s/smax);
 
     % ----------------- Partitioning -----------------
-    % Sensing radii
-    R = tan(a) * Z;
     % Coverage quality
     f = fu(Z, zmin, zmax);
-    % Sensing disks
+    % Sensing patterns
     for i=1:N
-        C{i} = [X(i) + R(i) * cos(t) ; Y(i) + R(i) * sin(t)];
+        C{i} = bsxfun(@plus, rot( Z(i)/zmin.*Cb, TH(i) ), [X(i) ; Y(i)]);
     end
-    % Communication range
-    r_comm = communication_range(Z, zmin, zmax, a);
+    % Communication range %%%%%%%%%%%% FIX THIS %%%%%%%%%%%%
+    r_comm = 10*Cb_max_radius * ones(size(f));
     
     % Store simulation data
     Xs(s,:) = X;
     Ys(s,:) = Y;
     Zs(s,:) = Z;
-    Rs(s,:) = R;
+	THs(s,:) = TH;
     
     % Sensed space partitioning
     for i=1:N
-        % Find the nodes in communication range of each node i
-		A(i,:) = in_comms_range3( X, Y, Z, i, r_comm(i) );
-        
-        % The index of i in the reduced state vector is
-        ind = sum(A(i,1:i));
-        
-		% Find the cell of each node i based on its neighbors
-		W{i} = sensed_partitioning_uniform_cell(region, ...
-            C( logical(A(i,:)) ), f( logical(A(i,:)) ), ind);
+		% Find the cell of each node i based on all other nodes
+		W{i} = sensed_partitioning_uniform_anisotropic_cell(region, ...
+			C, f, i);
     end
     
     
@@ -248,6 +231,7 @@ for s=1:smax
     sim.X = X;
     sim.Y = Y;
     sim.Z = Z;
+	sim.TH = TH;
     sim.C = C;
     sim.W = W;
     sim.f = f;
@@ -261,52 +245,57 @@ for s=1:smax
     % Find covered area and H objective
     for i=1:N
         if ~isempty(W{i})
-            % Numerically integrate phi on Wi
-			I = 0;
-			[xm, ym] = meshgrid(linspace(X(i)-R(i),X(i)+R(i),gridsize), ...
-				linspace(Y(i)-R(i),Y(i)+R(i),gridsize));
-			dx = abs(xm(1,1)-xm(1,2));
-			dy = abs(ym(1,1)-ym(2,1));
-            for l=1:gridsize^2
-                if inpolygon(xm(l), ym(l), W{i}(1,:), W{i}(2,:))
-                    ds = dx*dy;
-                    I = I + ds * phi(xm(l), ym(l));
-                end
-            end
-            H(s) = H(s) + f(i) * I;
             cov_area(s) = cov_area(s) + polyarea_nan(W{i}(1,:), W{i}(2,:));
+            H(s) = H(s) + f(i) * polyarea_nan(W{i}(1,:), W{i}(2,:));
         end
     end
     
     
     % ----------------- Control law -----------------
-    for i=1:N
-        % The index of i in the reduced state vector is
-        ind = sum(A(i,1:i));
+    parfor i=1:N % parfor faster here
+        % Create anonymous functions for the Jacobians
+        % The functions include parameters specific to this node
+		if CIRCLE_APPROX
+			Jxy = @(q) J_ellipse_xy(q);
+			Jz = @(q) J_ellipse_z(q, X(i), Y(i), Z(i), TH(i), zmin, ...
+				Cb_min_radius, Cb_min_radius, 0, 0);
+			Jth = @(q) J_ellipse_th(q, X(i), Y(i), Z(i), TH(i), zmin, ...
+				Cb_min_radius, Cb_min_radius, 0, 0);
+		else
+			Jxy = @(q) J_ellipse_xy(q);
+			Jz = @(q) J_ellipse_z(q, X(i), Y(i), Z(i), TH(i), zmin, ...
+				a, b, c_offset_x, c_offset_y);
+			Jth = @(q) J_ellipse_th(q, X(i), Y(i), Z(i), TH(i), zmin, ...
+				a, b, c_offset_x, c_offset_y);
+		end
         
-        % Give correct info based on adjacency matrix A
-        [uX(i), uY(i), uZ(i)] = ...
-            control_uniform_phi(region, phi, gridsize, zmin, zmax, a, ...
-            W(logical(A(i,:))), C(logical(A(i,:))), f(logical(A(i,:))), ...
-            i, X(i), Y(i), Z(i));
+		[uX(i), uY(i)] = control_uniform_planar(region, W, C, ...
+			f, i, Jxy);
+		uZ(i) = control_uniform_altitude(region, W, C, ...
+			f, dfu(Z(i), zmin, zmax), i, Jz);
+		uTH(i) = control_uniform_rotational(region, W, C, ...
+			f, i, Jth);
     end
+    
     
     % Control inputs with gain
     uX = axy * uX;
     uY = axy * uY;
     uZ = az * uZ;
+	uTH = ath * uTH;
     
     
     % ----------------- Simulate with ode -----------------
     Tspan = [s*Tstep (s+1)*Tstep];
-    IC = [X Y Z]';
-    u = [uX uY uZ]';
-    [T, XYZ] = ode45(@(t,y) DYNAMICS_simple(t, y, u), Tspan, IC);
+    IC = [X Y Z TH]';
+    u = [uX uY uZ uTH]';
+    [T, ode_state] = ode45(@(t,y) DYNAMICS_simple(t, y, u), Tspan, IC);
     
     % Keep the last row of XYZ
-    X = XYZ(end, 1:N );
-    Y = XYZ(end, N+1:2*N );
-    Z = XYZ(end, 2*N+1:3*N );
+    X = ode_state(end, 1:N );
+    Y = ode_state(end, N+1:2*N );
+    Z = ode_state(end, 2*N+1:3*N );
+    TH = ode_state(end, 3*N+1:4*N );
     
 end
 elapsed_time = toc;
@@ -321,11 +310,7 @@ fprintf('Average iteration time: %.4f s\n', average_iteration)
 % Plot covered area
 figure;
 plot( Tstep*linspace(1,smax,smax), 100*cov_area/region_area, 'b');
-hold on
-area_opt = 100 * N * pi * (zopt * tan(a))^2 / region_area;
-plot( Tstep*[1 smax], [area_opt area_opt], 'k--');
 axis([0 Tstep*smax 0 100]);
-% axis([0 Tstep*smax 0 140]);
 h = xlabel('$Time ~(s)$');
 set(h,'Interpreter','latex')
 h = ylabel('$A_{cov}~(\%)$');
@@ -334,21 +319,22 @@ set(h,'Interpreter','latex')
 % Plot objective
 figure;
 plot( Tstep*linspace(1,smax,smax), H, 'b');
-axis([0 Tstep*smax 0 ceil(max(H))]);
 h = xlabel('$Time ~(s)$');
 set(h,'Interpreter','latex')
 h = ylabel('$\mathcal{H}$');
 set(h,'Interpreter','latex')
 
 % Save trajectories
-traj = zeros(3,smax,N);
+traj = zeros(4,smax,N);
 traj(1,:,:) = Xs;
 traj(2,:,:) = Ys;
 traj(3,:,:) = Zs;
+traj(4,:,:) = THs;
 
 %%%%%%%%%%%%%%%%%%% Save Results %%%%%%%%%%%%%%%%%%%
 if SAVE_RESULTS
     filename = ...
-        strcat( 'results_uniform_phi_' , datestr(clock,'yyyymmdd_HHMM') , '.mat' );
+        strcat( 'results_uniform_anisotropic_', ...
+        datestr(clock,'yyyymmdd_HHMM') , '.mat' );
     save(filename);
 end

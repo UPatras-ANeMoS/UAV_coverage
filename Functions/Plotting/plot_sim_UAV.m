@@ -24,11 +24,20 @@ if sim.PLOT_STATE_3D || sim.PLOT_STATE_2D || sim.PLOT_STATE_QUALITY || sim.PLOT_
         hold on
         % Region
         plot_poly( sim.region, 'k');
-        % Sensing disks and cells
-        for i=1:sim.N
-            plot_poly( sim.C{i}, 'r--');
-            plot_poly( sim.W{i}, 'k');
-        end
+        % Sensing patterns and cells
+		for i=1:sim.N
+			plot_poly( sim.C{i}, 'r--');
+			plot_poly( sim.W{i}, 'k');
+		end
+		% Real sensing patterns
+		if isfield(sim, 'CIRCLE_APPROX') && sim.CIRCLE_APPROX
+			for i=1:sim.N
+				C_real = bsxfun(@plus, ...
+					rot( sim.Z(i)/sim.zmin.*sim.Cb, sim.TH(i) ), ...
+					[sim.X(i) ; sim.Y(i)]);
+				plot_poly( C_real, 'k:');
+			end
+		end
         % Node positions
         for i=1:sim.N
 %                 tmpc = [sim.X(i) + disk_rad * cos(t) ; sim.Y(i) + disk_rad * sin(t)];
@@ -68,11 +77,20 @@ if sim.PLOT_STATE_3D || sim.PLOT_STATE_2D || sim.PLOT_STATE_QUALITY || sim.PLOT_
     if sim.PLOT_STATE_3D
         clf
         hold on
-        % Sensing disks and cells
-        for i=1:sim.N
-            plot3_poly( [sim.C{i} ; zeros(size(sim.C{i}(1,:)))], 'r--');
-            plot3_poly( [sim.W{i} ; zeros(size(sim.W{i}(1,:)))], 'k');
-        end
+        % Sensing patterns and cells
+		for i=1:sim.N
+			plot3_poly( [sim.C{i} ; zeros(size(sim.C{i}(1,:)))], 'r--');
+			plot3_poly( [sim.W{i} ; zeros(size(sim.W{i}(1,:)))], 'k');
+		end
+		% Real sensing patterns
+		if isfield(sim, 'CIRCLE_APPROX') && sim.CIRCLE_APPROX
+			for i=1:sim.N
+				C_real = bsxfun(@plus, ...
+					rot( sim.Z(i)/sim.zmin.*sim.Cb, sim.TH(i) ), ...
+					[sim.X(i) ; sim.Y(i)]);
+				plot3_poly( [C_real ; zeros(size(C_real))], 'k:');
+			end
+		end
         % Node positions and cones
         for i=1:sim.N
             plot3( sim.X(i), sim.Y(i), sim.Z(i), 'ko' )
@@ -119,7 +137,7 @@ if sim.PLOT_STATE_3D || sim.PLOT_STATE_2D || sim.PLOT_STATE_QUALITY || sim.PLOT_
         plot_phi( sim.phi , sim.region );
         % Region
         plot_poly( sim.region, 'k');
-        % Sensing disks and cells
+        % Sensing patterns and cells
         for i=1:sim.N
             plot_poly( sim.C{i}, 'r--');
             plot_poly( sim.W{i}, 'k');
