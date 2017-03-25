@@ -47,7 +47,7 @@ The following screenshots are from the `UAV_coverage_anisotropic.m` simulation.
 <img src="./Screenshots/uniform_anisotropic_traj.png" width="49%">
 
 ## References
-[1] Sotiris Papatheodorou, Anthony Tzes, Yiannis Stergiopoulos, [*Collaborative Visual Area Coverage*](http://dx.doi.org/10.1016/j.robot.2017.03.005), Robotics and Autonomous Systems, ISSN 0921-8890, Elsevier [Accepted for publication]
+[1] Sotiris Papatheodorou, Anthony Tzes, Yiannis Stergiopoulos, [*Collaborative Visual Area Coverage*](http://dx.doi.org/10.1016/j.robot.2017.03.005), Robotics and Autonomous Systems, ISSN 0921-8890, Elsevier
 
 [2] Sotiris Papatheodorou, Anthony Tzes, *Cooperative Visual Convex Area Coverage using a Tessellation-free strategy*, In Proceedings of the 56th IEEE Conference on Decision and Control (CDC) 2017, 12-15 December 2017, Melbourne, Australia [Review Pending]
 
