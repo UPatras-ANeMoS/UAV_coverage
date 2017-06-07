@@ -5,7 +5,7 @@ Simulations for planar area coverage by a swarm of UAVs equipped with downwards 
 Included are simulations taking into account different sensing patterns, coverage quality functions and region importance functions, each one being a different `.m` file. The initial network configuration and all simulation parameters are set inside these files which contain comments on their exact usage. The following simulations are included:
 * `UAV_coverage_uniform_quality.m` simulates a network with circular sensing patterns and uniform coverage quality on a region whose points have equal importance.
 * `UAV_coverage_decreasing_quality.m` simulates a network with with circular sensing patterns and decreasing coverage quality (paraboloid) on a region whose points have equal importance.
-* `UAV_coverage_decreasing_quality.m` simulates a network with circular sensing patterns and uniform coverage quality on a region whose points are assigned importance weights by a function phi.
+* `UAV_coverage_decreasing_quality_phi.m` simulates a network with circular sensing patterns and uniform coverage quality on a region whose points are assigned importance weights by a function phi.
 * `UAV_coverage_anisotropic.m` simulates a network with with elliptical sensing patterns and uniform coverage quality on a region whose points have equal importance.
 
 Included are also some `.m` files used for plotting the results of the aforementioned simulations, namely `FIGURE_simulation_results.m`, `FIGURE_simulation_comparison.m` and `FIGURE_simulation_results_anisotropic.m`.
