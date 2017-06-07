@@ -26,7 +26,7 @@ Before using the scripts, you must copy the the `gpcmex` file from `MATLAB/[Rele
 ## References
 [1] Sotiris Papatheodorou, Yiannis Stergiopoulos, Anthony Tzes, [*Distributed area coverage control with imprecise robot localization*](http://ieeexplore.ieee.org/document/7535920/), 24th Mediterranean Conference on Control and Automation (MED) 2016, pp. 214-219, 21-24 June 2016, Athens, Greece 
 
-[2] Sotiris Papatheodorou, Anthony Tzes and K. Giannousakis, *Experimental Studies on Distributed Control for Area Coverage using Mobile Robots*, 25th Mediterranean Conference on Control and Automation (MED) 2017, 3-7 July 2017, Valetta, Malta [Accepted]
+[2] Sotiris Papatheodorou, Anthony Tzes and Konstantinos Giannousakis, *Experimental Studies on Distributed Control for Area Coverage using Mobile Robots*, 25th Mediterranean Conference on Control and Automation (MED) 2017, 3-7 July 2017, Valetta, Malta [Accepted]
 
 ### License
 Distributed under the [Apache License Version 2.0](LICENSE.txt)

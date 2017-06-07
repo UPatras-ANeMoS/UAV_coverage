@@ -1,7 +1,8 @@
 # UAV Coverage
-Simulations for planar area coverage by a swarm of UAVs equipped with downwards facing cameras.
+Simulations for planar area coverage by a swarm of Mobile Aerial Agents equipped with downwards facing cameras. There is separate code for MAAs with [precise](Precise Positioning) and uncertain [positioning](Uncertain Positioning).
 
 ## License
 Distributed under the [Apache License Version 2.0](LICENSE.txt).
 <br>
-Copyright © 2016 Sotiris Papatheodorou
+Copyright © 2016-2017 Sotiris Papatheodorou
+

@@ -56,4 +56,4 @@ The following screenshots are from the `UAV_coverage_anisotropic.m` simulation.
 ## License
 Distributed under the [Apache License Version 2.0](LICENSE.txt).
 <br>
-Copyright © 2016 Sotiris Papatheodorou
+Copyright © 2016-2017 Sotiris Papatheodorou
