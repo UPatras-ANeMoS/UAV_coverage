@@ -28,6 +28,8 @@ Before using the scripts, you must copy the the `gpcmex` file from `MATLAB/[Rele
 
 [2] S. Papatheodorou, A. Tzes and K. Giannousakis, *Experimental Studies on Distributed Control for Area Coverage using Mobile Robots*, In Proceedings of the 25th Mediterranean Conference on Control and Automation (MED), pp. 690-695, July 3-6, 2017, Valletta, Malta
 
+[3] S. Papatheodorou, A. Tzes, K. Giannousakis, and Y. Stergiopoulos, *Distributed Area Coverage Control with Imprecise Robot Localization*, IEEE Transactions on Automatic Control, ISSN 0018-9286, IEEE [Review pending]
+
 ### License
 Distributed under the [Apache License Version 2.0](LICENSE.txt)
 <br>
