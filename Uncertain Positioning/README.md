@@ -24,9 +24,9 @@ Before using the scripts, you must copy the the `gpcmex` file from `MATLAB/[Rele
 <img src="./Screenshots/objective.png" width="49%"> <img src="./Screenshots/trajectories.png" width="49%">
 
 ## Relevant Publications
-[1] S. Papatheodorou, A. Tzes, and Y. Stergiopoulos, [*Collaborative Visual Area Coverage*](https://doi.org/10.1016/j.robot.2017.03.005), Robotics and Autonomous Systems, ISSN 0921-8890, Volume 92, June 2017, Pages 126–138, Elsevier
+[1] S. Papatheodorou, Y. Stergiopoulos, and A. Tzes, [*Distributed area coverage control with imprecise robot localization*](http://ieeexplore.ieee.org/document/7535920/), In Proceedings of the 24th Mediterranean Conference on Control and Automation (MED), pp. 214-219, June 21-24, 2016, Athens, Greece
 
-[2] S. Papatheodorou and A. Tzes, *Cooperative Visual Convex Area Coverage using a Tessellation-free strategy*, In Proceedings of the 56th IEEE Conference on Decision and Control (CDC) 2017, December 12-15, 2017, Melbourne, Australia [Accepted]
+[2] S. Papatheodorou, A. Tzes and K. Giannousakis, *Experimental Studies on Distributed Control for Area Coverage using Mobile Robots*, In Proceedings of the 25th Mediterranean Conference on Control and Automation (MED), pp. 690-695, July 3-6, 2017, Valletta, Malta
 
 ### License
 Distributed under the [Apache License Version 2.0](LICENSE.txt)
