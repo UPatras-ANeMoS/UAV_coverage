@@ -1,3 +1,9 @@
+# Repository Change
+You can find the latest code here:
+- [Area coverage algorithms in MATLAB](https://gitlab.com/sotirisp/Area-Coverage)
+- [Area coverage algorithms in C++](https://gitlab.com/sotirisp/NRobot)
+- [UAV coverage](https://gitlab.com/sotirisp/UAV-Coverage)
+
 # UAV Coverage
 Simulations for planar area coverage by a swarm of Mobile Aerial Agents equipped with downwards facing cameras. There is separate code for MAAs with [precise](Precise%20Positioning) and [uncertain](Uncertain%20Positioning) positioning.
 
